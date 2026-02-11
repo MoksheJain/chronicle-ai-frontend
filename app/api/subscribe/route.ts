@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const runtime = "nodejs"
+const controller = new AbortController()
+const timeout = setTimeout(() => controller.abort(), 30000)
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,15 +16,18 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await fetch(
-      "https://chronicle-ai-backend.onrender.com/subscribe",
+      "https://chronicle-ai-back-end.onrender.com/subscribe",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
+        signal: controller.signal,
       }
     )
+
+    clearTimeout(timeout)
 
     const data = await response.json()
 
@@ -36,3 +42,12 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+// export const runtime = "nodejs"
+
+// export async function POST() {
+//   const response = await fetch("https://google.com")
+//   const text = await response.text()
+
+//   return new Response("OK")
+// }
